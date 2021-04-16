@@ -14,43 +14,43 @@ class AddictionWorld():
         
     
     def add_reward(self, reward, time, trials, verbose=False):
-        if time < 0 or time >= self.max_time:
+        if time < 1 or time > self.max_time:
             print("Tried to add reward on time {} when max_time is {}"
                 .format(time, self.max_time))
             return False
         
-        if trials[0] < 0 or trials[1] >= self.n_trials-1:
-            print("Tried to add rewards for trials {}-{} when there are only trials 0-{}"
-                .format(trials[0], trials[1], self.n_trials-1))
+        if trials[0] < 1 or trials[1] > self.n_trials:
+            print("Tried to add rewards for trials {}-{} when there are only trials 1-{}"
+                .format(trials[0], trials[1], self.n_trials))
             return False
         
         if verbose:
             print("Adding reward of {} on time {} for trials {}-{}"
                 .format(reward, time, trials[0], trials[0]))
-        for i in range(trials[0], trials[1]+1):
-            if verbose and self.world[i][time] != 0:
+        for i in range(trials[0]-1, trials[1]):
+            if verbose and self.world[i][time-1] != 0:
                 print("Replacing current reward of {} on time {} for trial {} with new reward of {}"
-                    .format(self.world[i][time], time, i, reward))
-            self.world[i][time] = reward
+                    .format(self.world[i][time-1], time, i, reward))
+            self.world[i][time-1] = reward
         return True
     
 
     def clear_reward(self, time, trials, verbose=False):
-        if time < 0 or time >= self.max_time:
+        if time < 1 or time > self.max_time:
             print("Tried to clear rewards on time {} when max_time is {}"
                 .format(time, self.max_time))
             return False
 
-        if trials[0] < 0 or trials[1] >= self.n_trials-1:
-            print("Tried to clear rewards for trials {}-{} when there are only trials 0-{}"
-                .format(trials[0], trials[1], self.n_trials-1))
+        if trials[0] < 1 or trials[1] > self.n_trials:
+            print("Tried to clear rewards for trials {}-{} when there are only trials 1-{}"
+                .format(trials[0], trials[1], self.n_trials))
             return False
         
         if verbose:
             print("Clearing rewards on time {} for trials {}-{}"
                 .format(time, trials[0], trials[0]))
-        for i in range(trials[0], trials[1]+1):
-            self.world[i][time] = 0
+        for i in range(trials[0]-1, trials[1]):
+            self.world[i][time-1] = 0
         return True
     
 
@@ -73,8 +73,8 @@ class AddictionWorld():
 
         for trial in range(self.n_trials):
             for t in range(self.max_time):
-                prediction_error[trial][t] = self.world[trial][t] - value[trial][t]
-                value[trial+1][t] = value[trial][t] + ALPHA * (self.world[trial][t+1] + GAMMA * value[trial][t+1] - value[trial][t])
+                next_value = value[trial][t+1] if t+1 != self.max_time else 0
+                value[trial+1][t] = value[trial][t] + ALPHA * (self.world[trial][t] + GAMMA * next_value - value[trial][t])
+                prediction_error[trial][t] = value[trial+1][t] - value[trial][t]
 
         return value[1:], prediction_error
-    
