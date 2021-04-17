@@ -1,3 +1,5 @@
+import numpy as np
+
 class AddictionWorld():
     def __init__(self, max_time, n_trials, rewards=[], verbose=False):
         '''
@@ -25,9 +27,9 @@ class AddictionWorld():
             print("Adding reward of {} on time {} for trials {}-{}"
                 .format(reward, time, trials[0], trials[0]))
         for i in range(trials[0]-1, trials[1]):
-            if verbose and self.world[i][time-1] != 0:
+            if verbose and self.reward[i][time-1] != 0:
                 print("Replacing current reward of {} on time {} for trial {} with new reward of {}"
-                    .format(self.world[i][time-1], time, i, reward))
+                    .format(self.reward[i][time-1], time, i, reward))
             self.reward[i][time-1] = reward
         return True
 
