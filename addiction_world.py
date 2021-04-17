@@ -62,6 +62,12 @@ class AddictionWorld():
             self.add_reward(r, t, trials, verbose=verbose)
     
     def run_TD(self, ALPHA=1, GAMMA=1):
+        """
+        Function which simulates trials, updating values and recording prediction error
+        
+        ALPHA -> How important actual reward is when updating values (as opposed to previous value)
+        GAMMA -> How important future expected reward is (discount factor)
+        """
         value = np.zeros((self.n_trials+1, self.max_time))
         prediction_error = np.zeros(self.reward.shape)
 
@@ -71,6 +77,7 @@ class AddictionWorld():
                 future_value = value[trial][t+1] if t+1 != self.max_time else 0
                 actual_value = self.reward[trial][t] + (GAMMA * future_value)
                 prediction_error[trial][t] = actual_value - expected_value
+                # Based on the Princeton paper, uses ALPHA as an importance weight for actual reward vs expectation
                 value[trial+1][t] = ((1 - ALPHA) * expected_value) + (ALPHA * actual_value)
 
         return value[1:], prediction_error
