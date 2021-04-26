@@ -8,6 +8,7 @@ authors: kpant, jagalinho
 
 # Import libraries
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 class AddictionAgent:
@@ -172,5 +173,51 @@ class AddictionAgent:
             print(self.value)
             print('Prediction Errors:')
             print(self.prediction_error)
+        
+        return self
+
+    def __plot(self, fig, data, label, title):
+        """
+        Generate a 3D plot from given 2D data
+        :param fig: pyplot Figure
+        :param data: 2D numpy matrix
+        :param label: String to label the data
+        :param title: String to title the plot
+        :return: pyplot Figure with plot added
+        """
+        X, Y = np.meshgrid(np.arange(data.shape[1]), np.arange(data.shape[0]))
+
+        ax = fig.add_subplot(projection='3d')
+        ax.set_box_aspect((np.ptp(X), np.ptp(Y)/2, np.ptp(data)))
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Trials')
+        ax.set_zlabel(label)
+        ax.set_title(title)
+
+        ax.plot_surface(X, Y, data)
+
+        return fig
+    
+    def plot_value(self, title=''):
+        """
+        Plot value table
+        :param title: String to title the plot
+        :return: self
+        """
+        fig = plt.figure()
+        self.__plot(fig, self.value, 'Value', title)
+        plt.show()
+
+        return self
+
+    def plot_prediction_error(self, title=''):
+        """
+        Plot prediction error
+        :param title: String to title the plot
+        :return: self
+        """
+        fig = plt.figure()
+        self.__plot(fig, self.prediction_error, 'Prediction Error', title)
+        plt.show()
         
         return self
