@@ -3,7 +3,7 @@
 """
 Agent class for addiction RL modeling
 
-authors: kpant, jagalinho
+authors: kpant, jagalinho, sjo302
 """
 
 # Import libraries
@@ -161,8 +161,11 @@ class AddictionAgent:
             for t in range(self.max_time - 1):
                 expected_value = self.value[trial][t]
                 actual_value = self.reward[trial][t] + self.discount_rate * (self.value[trial][t + 1])
-                prediction_error = np.max([(actual_value - expected_value + self.addiction[trial][t]),
-                                           self.addiction[trial][t]])
+                if self.addiction[trial][t] != 0:
+                    prediction_error = np.max([(actual_value - expected_value + self.addiction[trial][t]),
+                                               self.addiction[trial][t]])
+                else:
+                    prediction_error = actual_value - expected_value
                 self.prediction_error[trial][t] = prediction_error
                 if trial < (self.n_trials - 1):
                     self.value[trial + 1][t] = expected_value + (self.learning_rate * prediction_error)
