@@ -161,8 +161,11 @@ class AddictionAgent:
             for t in range(self.max_time - 1):
                 expected_value = self.value[trial][t]
                 actual_value = self.reward[trial][t] + self.discount_rate * (self.value[trial][t + 1])
-                prediction_error = np.max([(actual_value - expected_value + self.addiction[trial][t]),
-                                           self.addiction[trial][t]])
+                if self.addiction[trial][t] != 0:
+                    prediction_error = np.max([(actual_value - expected_value + self.addiction[trial][t]),
+                                               self.addiction[trial][t]])
+                else:
+                    prediction_error = actual_value - expected_value
                 self.prediction_error[trial][t] = prediction_error
                 if trial < (self.n_trials - 1):
                     self.value[trial + 1][t] = expected_value + (self.learning_rate * prediction_error)
@@ -176,7 +179,7 @@ class AddictionAgent:
         
         return self
 
-    def __plot(self, fig, data, label, title):
+    def __plot(self, fig, data, label, title, addicted = False):
         """
         Generate a 3D plot from given 2D data
         :param fig: pyplot Figure
@@ -188,36 +191,68 @@ class AddictionAgent:
         X, Y = np.meshgrid(np.arange(data.shape[1]), np.arange(data.shape[0]))
 
         ax = fig.add_subplot(projection='3d')
-        ax.set_box_aspect((np.ptp(X), np.ptp(Y)/2, np.ptp(data)))
+        #ax.set_box_aspect((np.ptp(X), np.ptp(Y)/2, np.ptp(data)))
+        ax.dist = 15
         ax.set_xlabel('Time')
         ax.set_ylabel('Trials')
         ax.set_zlabel(label)
         ax.set_title(title)
-
-        ax.plot_surface(X, Y, data)
+        if addicted == True:
+            ax.plot_surface(X, Y, data, color = 'g')
+        else:
+            ax.plot_surface(X, Y, data)
 
         return fig
     
-    def plot_value(self, title=''):
+    def plot_value(self, title='', addiction = False):
         """
         Plot value table
         :param title: String to title the plot
         :return: self
         """
-        fig = plt.figure()
-        self.__plot(fig, self.value, 'Value', title)
+        fig = plt.figure(figsize = (15,15))
+        self.__plot(fig, self.value, 'Value', title, addiction)
+        plt.legend()
         plt.show()
 
         return self
 
-    def plot_prediction_error(self, title=''):
+    def plot_prediction_error(self, title='', addiction = False):
         """
         Plot prediction error
         :param title: String to title the plot
         :return: self
         """
-        fig = plt.figure()
-        self.__plot(fig, self.prediction_error, 'Prediction Error', title)
+        fig = plt.figure(figsize = (15,15))
+        self.__plot(fig, self.prediction_error, 'Prediction Error', title, addiction)
+        plt.legend()
         plt.show()
         
         return self
+
+def plot_comparison(data1, data2, title, label1, label2):
+        X1, Y1 = np.meshgrid(np.arange(data1.shape[1]), np.arange(data1.shape[0]))
+        X2, Y2 = np.meshgrid(np.arange(data2.shape[1]), np.arange(data2.shape[0]))
+        
+        
+        fig = plt.figure(figsize = (20,10))
+        ax = fig.add_subplot(121, projection='3d')
+        ax.dist = 11
+        ax.set_xlabel('Time', fontsize = 13)
+        ax.set_ylabel('Trials', fontsize = 13)
+        ax.set_zlabel(label1, fontsize = 13)
+        
+        ax.plot_surface(X1, Y1, data1)
+       
+        ax2 = fig.add_subplot(122, projection='3d')
+       
+        ax2.dist = 11
+        ax2.set_xlabel('Time', fontsize = 13)
+        ax2.set_ylabel('Trials', fontsize = 13)
+        ax2.set_zlabel(label2, fontsize = 13)
+        ax2.plot_surface(X2, Y2, data2)
+       
+        
+        plt.suptitle(title, size = 20)
+        plt.show()
+        
