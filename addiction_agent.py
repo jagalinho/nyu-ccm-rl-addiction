@@ -179,13 +179,15 @@ class AddictionAgent:
         
         return self
 
-    def __plot(self, fig, data, label, title, addicted = False):
+    def __plot(self, fig, data, label, title, addicted = False, savefig = None):
         """
         Generate a 3D plot from given 2D data
         :param fig: pyplot Figure
         :param data: 2D numpy matrix
         :param label: String to label the data
         :param title: String to title the plot
+        :param addicted: Boolean is agent addicted (controls color of plane)
+        :param savefig: String to save the plot
         :return: pyplot Figure with plot added
         """
         X, Y = np.meshgrid(np.arange(data.shape[1]), np.arange(data.shape[0]))
@@ -193,38 +195,39 @@ class AddictionAgent:
         ax = fig.add_subplot(projection='3d')
         #ax.set_box_aspect((np.ptp(X), np.ptp(Y)/2, np.ptp(data)))
         ax.dist = 15
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Trials')
-        ax.set_zlabel(label)
-        ax.set_title(title)
+        ax.set_xlabel('Time', fontsize = 13)
+        ax.set_ylabel('Trials', fontsize = 13)
+        ax.set_zlabel(label, fontsize = 13)
+        ax.set_title(title, size = 20)
         if addicted == True:
             ax.plot_surface(X, Y, data, color = 'g')
         else:
             ax.plot_surface(X, Y, data)
-
+        if savefig is not None:
+            plt.savefig(savefig)
         return fig
     
-    def plot_value(self, title='', addiction = False):
+    def plot_value(self, title='', addiction = False, savefig = None):
         """
         Plot value table
         :param title: String to title the plot
         :return: self
         """
         fig = plt.figure(figsize = (15,15))
-        self.__plot(fig, self.value, 'Value', title, addiction)
+        self.__plot(fig, self.value, 'Value', title, addiction, savefig)
         plt.legend()
         plt.show()
 
         return self
 
-    def plot_prediction_error(self, title='', addiction = False):
+    def plot_prediction_error(self, title='', addiction = False, savefig = None):
         """
         Plot prediction error
         :param title: String to title the plot
         :return: self
         """
         fig = plt.figure(figsize = (15,15))
-        self.__plot(fig, self.prediction_error, 'Prediction Error', title, addiction)
+        self.__plot(fig, self.prediction_error, 'Prediction Error', title, addiction, savefig)
         plt.legend()
         plt.show()
         
