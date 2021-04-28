@@ -190,6 +190,7 @@ class AddictionAgent:
         :param savefig: String to save the plot
         :return: pyplot Figure with plot added
         """
+        fig.set_size_inches(10,10)
         X, Y = np.meshgrid(np.arange(data.shape[1]), np.arange(data.shape[0]))
 
         ax = fig.add_subplot(projection='3d')
@@ -198,13 +199,13 @@ class AddictionAgent:
         ax.set_xlabel('Time', fontsize = 13)
         ax.set_ylabel('Trials', fontsize = 13)
         ax.set_zlabel(label, fontsize = 13)
-        ax.set_title(title, size = 20)
+        ax.set_title(title, size = 18)
         if addicted == True:
             ax.plot_surface(X, Y, data, color = 'g')
         else:
             ax.plot_surface(X, Y, data)
         if savefig is not None:
-            plt.savefig(savefig)
+            plt.savefig(savefig, bbox_inches = 'tight')
         return fig
     
     def plot_value(self, title='', addiction = False, savefig = None):
@@ -240,22 +241,30 @@ def plot_comparison(data1, data2, title, label1, label2):
         
         fig = plt.figure(figsize = (20,10))
         ax = fig.add_subplot(121, projection='3d')
-        ax.dist = 11
-        ax.set_xlabel('Time', fontsize = 13)
-        ax.set_ylabel('Trials', fontsize = 13)
-        ax.set_zlabel(label1, fontsize = 13)
+        ax.dist = 10
+        
+        ax.set_xlabel('Time', fontsize = 40, labelpad = 20)
+        ax.set_ylabel('Trials', fontsize = 40, labelpad = 20)
+        ax.set_zlabel(label1, fontsize = 40, labelpad = 20)
         
         ax.plot_surface(X1, Y1, data1)
-       
+        plt.xticks(fontsize = 30)
+        plt.yticks(fontsize = 30)
+        ax.zaxis.set_tick_params(labelsize=30)
+        
+        
         ax2 = fig.add_subplot(122, projection='3d')
        
-        ax2.dist = 11
-        ax2.set_xlabel('Time', fontsize = 13)
-        ax2.set_ylabel('Trials', fontsize = 13)
-        ax2.set_zlabel(label2, fontsize = 13)
+        ax2.dist = 10
+        ax2.set_xlabel('Time', fontsize = 40, labelpad = 20)
+        ax2.set_ylabel('Trials', fontsize = 40, labelpad = 20)
+        ax2.set_zlabel(label2, fontsize = 40, labelpad = 20)
         ax2.plot_surface(X2, Y2, data2)
        
         
-        plt.suptitle(title, size = 20)
+        plt.suptitle(title, size = 60)
+        plt.xticks(fontsize = 30)
+        plt.yticks(fontsize = 30)
+        ax2.zaxis.set_tick_params(labelsize=30)
         plt.show()
-        
+        return fig
