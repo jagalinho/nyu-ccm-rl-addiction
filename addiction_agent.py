@@ -2,7 +2,6 @@
 
 """
 Agent class for addiction RL modeling
-
 authors: kpant, jagalinho
 """
 
@@ -55,7 +54,7 @@ class AddictionAgent:
         if trials is None:
             trial_range = (0, self.n_trials)
         else:
-            if trials[1] >= self.n_trials:
+            if trials[1] > self.n_trials:
                 raise ValueError(
                     f"Tried to add rewards for trials {trials[0]}-{trials[1]} when there are only {self.n_trials}")
             trial_range = trials
@@ -179,52 +178,56 @@ class AddictionAgent:
         
         return self
 
-    def __plot(self, fig, data, label, title, addicted = False):
+    def __plot(self, fig, data, label, title, addicted = False, savefig = None):
         """
         Generate a 3D plot from given 2D data
         :param fig: pyplot Figure
         :param data: 2D numpy matrix
         :param label: String to label the data
         :param title: String to title the plot
+        :param addicted: Boolean is agent addicted (controls color of plane)
+        :param savefig: String to save the plot
         :return: pyplot Figure with plot added
         """
+        fig.set_size_inches(10,10)
         X, Y = np.meshgrid(np.arange(data.shape[1]), np.arange(data.shape[0]))
 
         ax = fig.add_subplot(projection='3d')
         #ax.set_box_aspect((np.ptp(X), np.ptp(Y)/2, np.ptp(data)))
         ax.dist = 15
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Trials')
-        ax.set_zlabel(label)
-        ax.set_title(title)
+        ax.set_xlabel('Time', fontsize = 13)
+        ax.set_ylabel('Trials', fontsize = 13)
+        ax.set_zlabel(label, fontsize = 13)
+        ax.set_title(title, size = 18)
         if addicted == True:
             ax.plot_surface(X, Y, data, color = 'g')
         else:
             ax.plot_surface(X, Y, data)
-
+        if savefig is not None:
+            plt.savefig(savefig, bbox_inches = 'tight')
         return fig
     
-    def plot_value(self, title='', addiction = False):
+    def plot_value(self, title='', addiction = False, savefig = None):
         """
         Plot value table
         :param title: String to title the plot
         :return: self
         """
         fig = plt.figure(figsize = (15,15))
-        self.__plot(fig, self.value, 'Value', title, addiction)
+        self.__plot(fig, self.value, 'Value', title, addiction, savefig)
         plt.legend()
         plt.show()
 
         return self
 
-    def plot_prediction_error(self, title='', addiction = False):
+    def plot_prediction_error(self, title='', addiction = False, savefig = None):
         """
         Plot prediction error
         :param title: String to title the plot
         :return: self
         """
         fig = plt.figure(figsize = (15,15))
-        self.__plot(fig, self.prediction_error, 'Prediction Error', title, addiction)
+        self.__plot(fig, self.prediction_error, 'Prediction Error', title, addiction, savefig)
         plt.legend()
         plt.show()
         
@@ -237,22 +240,31 @@ def plot_comparison(data1, data2, title, label1, label2):
         
         fig = plt.figure(figsize = (20,10))
         ax = fig.add_subplot(121, projection='3d')
-        ax.dist = 11
-        ax.set_xlabel('Time', fontsize = 13)
-        ax.set_ylabel('Trials', fontsize = 13)
-        ax.set_zlabel(label1, fontsize = 13)
+        ax.dist = 10
+        
+        ax.set_xlabel('Time', fontsize = 40, labelpad = 20)
+        ax.set_ylabel('Trials', fontsize = 40, labelpad = 20)
+        ax.set_zlabel(label1, fontsize = 40, labelpad = 20)
         
         ax.plot_surface(X1, Y1, data1)
-       
+        plt.xticks(fontsize = 30)
+        plt.yticks(fontsize = 30)
+        ax.zaxis.set_tick_params(labelsize=30)
+        
+        
         ax2 = fig.add_subplot(122, projection='3d')
        
-        ax2.dist = 11
-        ax2.set_xlabel('Time', fontsize = 13)
-        ax2.set_ylabel('Trials', fontsize = 13)
-        ax2.set_zlabel(label2, fontsize = 13)
+        ax2.dist = 10
+        ax2.set_xlabel('Time', fontsize = 40, labelpad = 20)
+        ax2.set_ylabel('Trials', fontsize = 40, labelpad = 20)
+        ax2.set_zlabel(label2, fontsize = 40, labelpad = 20)
         ax2.plot_surface(X2, Y2, data2)
        
         
-        plt.suptitle(title, size = 20)
+        plt.suptitle(title, size = 60)
+        plt.xticks(fontsize = 30)
+        plt.yticks(fontsize = 30)
+        ax2.zaxis.set_tick_params(labelsize=30)
         plt.show()
+        return fig
         
