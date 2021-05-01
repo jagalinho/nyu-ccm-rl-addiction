@@ -177,6 +177,11 @@ class AddictionAgent:
             print(self.prediction_error)
         
         return self
+    
+    def find_addiction_point(self, reward_time, substance_time):
+        for i in range(len(self.value)):
+            if self.value[i][substance_time] > self.value[i][reward_time]:
+                return i
 
     def __plot(self, fig, data, label, title, addicted = False, savefig = None):
         """
