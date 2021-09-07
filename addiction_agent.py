@@ -2,7 +2,6 @@
 
 """
 Agent class for addiction RL modeling
-
 authors: kpant, jagalinho
 """
 
@@ -55,7 +54,7 @@ class AddictionAgent:
         if trials is None:
             trial_range = (0, self.n_trials)
         else:
-            if trials[1] >= self.n_trials:
+            if trials[1] > self.n_trials:
                 raise ValueError(
                     f"Tried to add rewards for trials {trials[0]}-{trials[1]} when there are only {self.n_trials}")
             trial_range = trials
@@ -178,6 +177,11 @@ class AddictionAgent:
             print(self.prediction_error)
         
         return self
+    
+    def find_addiction_point(self, reward_time, substance_time):
+        for i in range(len(self.value)):
+            if self.value[i][substance_time] > self.value[i][reward_time]:
+                return i
 
     def __plot(self, fig, data, label, title, addicted = False, savefig = None):
         """
