@@ -272,4 +272,3 @@ def plot_comparison(data1, data2, title, label1, label2):
         ax2.zaxis.set_tick_params(labelsize=30)
         plt.show()
         return fig
-        
