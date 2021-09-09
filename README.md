@@ -1,1 +1,1 @@
-## RL_addiction
+## Reinforcement Learning Model of Addiction
